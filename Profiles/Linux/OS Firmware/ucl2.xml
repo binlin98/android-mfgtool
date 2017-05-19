@@ -53,15 +53,15 @@
 	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
   
   	<!-- create partition -->
-	<CMD state="Updater" type="push" body="send" file="mksdcard-android%data_type%.sh.tar">Sending partition shell</CMD>
+	<CMD state="Updater" type="push" body="send" file="mksdcard-android.sh.tar">Sending partition shell</CMD>
 	<CMD state="Updater" type="push" body="$ tar xf $FILE "> Partitioning...</CMD>
-	<CMD state="Updater" type="push" body="$ sh mksdcard-android%data_type%.sh /dev/mmcblk%mmc%"> Partitioning...</CMD>
+	<CMD state="Updater" type="push" body="$ sh mksdcard-android.sh /dev/mmcblk%mmc%"> Partitioning...</CMD>
 	
 	<!-- burn uboot -->
 	<CMD state="Updater" type="push" body="$ dd if=/dev/zero of=/dev/mmcblk%mmc% bs=1k seek=384 conv=fsync count=129">clear u-boot arg</CMD>
 	<CMD state="Updater" type="push" body="$ echo 0 > /sys/block/mmcblk%mmc%boot0/force_ro">access boot partition 1</CMD>
 	
-	<CMD state="Updater" type="push" body="send" file="files/android/%folder%/u-boot-imx%soc%%plus%.imx" >Sending u-boot.bin</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/android/sabresd/u-boot-imx%soc%%plus%.imx" >Sending u-boot.bin</CMD>
 	
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc%boot0 bs=512 seek=2">write U-Boot to sd card</CMD>
 	<CMD state="Updater" type="push" body="$ echo 1 > /sys/block/mmcblk%mmc%boot0/force_ro"> re-enable read-only access </CMD>
@@ -69,7 +69,7 @@
 
 	<CMD state="Updater" type="push" body="$ ls -l /dev/mmc* ">Formatting sd partition</CMD>
 
-	<CMD state="Updater" type="push" body="send" file="files/android/%folder%/boot-imx%soc%%plus%%ldo%.img" >Sending and writting boot.img</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/android/sabresd/boot-imx%soc%%plus%%ldo%.img" >Sending and writting boot.img</CMD>
 	
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc%p1">write boot.img</CMD>
 
@@ -79,14 +79,14 @@
 
 	<CMD state="Updater" type="push" body="$ mkfs.ext4  -E nodiscard /dev/mmcblk%mmc%p7">Formatting device partition</CMD>
 	<CMD state="Updater" type="push" body="$ mount -o remount,size=512M rootfs /">change size of tmpfs</CMD>
-	<CMD state="Updater" type="push" body="send" file="files/android/%folder%/system.img" >Sending system.img</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/android/sabresd/system.img" >Sending system.img</CMD>
 	<CMD state="Updater" type="push" body="$ simg2img $FILE /dev/mmcblk%mmc%p5">writting sparse system.img</CMD>
 	
 	<!-- Write userdata.img is optional, for some customer this is needed, but it's optional. -->
 	<!-- Also, userdata.img will have android unit test, you can use this to do some auto test. -->
 	<!--	<CMD state="Updater" type="push" onError="ignore" body="pipe dd of=/dev/mmcblk0p7" file="file/android/userdate.img"> Sending userdata.img(optional) </CMD>
 	<CMD state="Updater" type="push" body="frf">flush the memory.</CMD>  -->
-	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%p2 bs=512" file="files/android/%folder%/recovery-imx%soc%%plus%%ldo%.img">Sending and writting recovery.img</CMD>
+	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%p2 bs=512" file="files/android/sabresd/recovery-imx%soc%%plus%%ldo%.img">Sending and writting recovery.img</CMD>
 	
 	<CMD state="Updater" type="push" body="$ sync">Sync file system</CMD>
 	<CMD state="Updater" type="push" body="frf">Finishing rootfs write</CMD>
@@ -96,7 +96,7 @@
 </LIST>
   
 <LIST name="eMMC-Android" desc="Choose eMMC as media">
-	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-imx%soc%%plus%%model%%ddr%-mfg.imx">Loading U-boot</CMD>
+	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-imx6dlops12004X1G-mfg.imx">Loading U-boot</CMD>
 		
 	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE" ifdev="MX6Q MX6D">Loading Kernel.</CMD>
@@ -107,24 +107,25 @@
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE" ifdev="MX6Q MX6D">Loading Initramfs.</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/%initramfs%" address="0x83800000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE" ifdev="MX6SL MX6SX MX7D MX6UL">Loading Initramfs.</CMD>
-
+<!--
 	<CMD state="BootStrap" type="load" file="firmware/zImage-imx%soc%%plus%-%model%.dtb" address="0x18000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE" ifdev="MX6Q">Loading device tree.</CMD>
-	<CMD state="BootStrap" type="load" file="firmware/zImage-imx%soc%-%model%.dtb" address="0x18000000"
+		-->
+	<CMD state="BootStrap" type="load" file="firmware/zImage-imx6dl-ops1200.dtb" address="0x18000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE" ifdev="MX6D">Loading device tree.</CMD>
 
 	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
   
   	<!-- create partition -->
-	<CMD state="Updater" type="push" body="send" file="mksdcard-android%data_type%.sh.tar">Sending partition shell</CMD>
+	<CMD state="Updater" type="push" body="send" file="mksdcard-android.sh.tar">Sending partition shell</CMD>
 	<CMD state="Updater" type="push" body="$ tar xf $FILE "> Partitioning...</CMD>
-	<CMD state="Updater" type="push" body="$ sh mksdcard-android%data_type%.sh /dev/mmcblk%mmc%"> Partitioning...</CMD>
+	<CMD state="Updater" type="push" body="$ sh mksdcard-android.sh /dev/mmcblk%mmc%"> Partitioning...</CMD>
 	
 	<!-- burn uboot -->
 	<CMD state="Updater" type="push" body="$ dd if=/dev/zero of=/dev/mmcblk%mmc% bs=1k seek=384 conv=fsync count=129">clear u-boot arg</CMD>
 	<CMD state="Updater" type="push" body="$ echo 0 > /sys/block/mmcblk%mmc%boot0/force_ro">access boot partition 1</CMD>
 	
-	<CMD state="Updater" type="push" body="send" file="files/android/%folder%/u-boot-imx6dlops12004X1G.imx" >Sending u-boot.bin</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/android/sabresd/u-boot-imx6dlops12004X1G.imx" >Sending u-boot.bin</CMD>
 	
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc%boot0 bs=512 seek=2">write U-Boot to sd card</CMD>
 	<CMD state="Updater" type="push" body="$ echo 1 > /sys/block/mmcblk%mmc%boot0/force_ro"> re-enable read-only access </CMD>
@@ -132,7 +133,7 @@
 
 	<CMD state="Updater" type="push" body="$ ls -l /dev/mmc* ">Formatting sd partition</CMD>
 
-	<CMD state="Updater" type="push" body="send" file="files/android/%folder%/boot-imx6dl.img" >Sending and writting boot.img</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/android/sabresd/boot-imx6dl.img" >Sending and writting boot.img</CMD>
 	
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc%p1">write boot.img</CMD>
 
@@ -143,14 +144,14 @@
 	<CMD state="Updater" type="push" body="$ mkfs.ext4  -E nodiscard /dev/mmcblk%mmc%p7">Formatting device partition</CMD>
 
 	<CMD state="Updater" type="push" body="$ mount -o remount,size=700M rootfs /">change size of tmpfs</CMD>
-	<CMD state="Updater" type="push" body="send" file="files/android/%folder%/system.img" >Sending system.img</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/android/sabresd/system.img" >Sending system.img</CMD>
 	<CMD state="Updater" type="push" body="$ simg2img $FILE /dev/mmcblk%mmc%p5">writting sparse system.img</CMD>
 	
 	<!-- Write userdata.img is optional, for some customer this is needed, but it's optional. -->
 	<!-- Also, userdata.img will have android unit test, you can use this to do some auto test. -->
 	<!--	<CMD state="Updater" type="push" onError="ignore" body="pipe dd of=/dev/mmcblk0p7" file="file/android/userdate.img"> Sending userdata.img(optional) </CMD>
 	<CMD state="Updater" type="push" body="frf">flush the memory.</CMD>  -->
-	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%p2 bs=512" file="files/android/%folder%/recovery.img">Sending and writting recovery.img</CMD>
+	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%p2 bs=512" file="files/android/sabresd/recovery.img">Sending and writting recovery.img</CMD>
 	
 	<CMD state="Updater" type="push" body="$ sync">Sync file system</CMD>
 	<CMD state="Updater" type="push" body="frf">Finishing rootfs write</CMD>
@@ -180,7 +181,7 @@
   
 
 
-	<CMD state="Updater" type="push" body="send" file="files/android/%folder%/boot-imx6dl.img" >Sending and writting boot.img</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/android/sabresd/boot-imx6dl.img" >Sending and writting boot.img</CMD>
 	
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc%p1">write boot.img</CMD>
 
